@@ -62,8 +62,7 @@ anchor test
 ### Project Structure
 
 - `programs/`: Contains the Rust smart contract code
-- `tests/`: Contains TypeScript tests
-- `migrations/`: Deployment scripts
+- `tests/`: Contains Rust tests
 
 ## Advice from a Caterpillar 🐛
 
