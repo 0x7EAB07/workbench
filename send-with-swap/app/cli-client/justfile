@@ -1,0 +1,55 @@
+# Send-with-Swap CLI commands
+# Run with 'just <command>'
+
+# Build the CLI in release mode
+build:
+    cargo build --release
+
+# Build the CLI in debug mode
+debug:
+    cargo build
+
+# Clean the build artifacts
+clean:
+    cargo clean
+
+# Run the CLI with custom arguments
+run *args:
+    cargo run --release -- {{args}}
+
+# Initialize a treasury
+init-treasury keypair:
+    cargo run --release -- init-treasury --keypair {{keypair}}
+
+# Send tokens with swap
+send keypair input_token output_token amount recipient treasury="" slippage="":
+    cargo run --release -- send \
+        --keypair {{keypair}} \
+        --input-token {{input_token}} \
+        --output-token {{output_token}} \
+        --amount {{amount}} \
+        --recipient {{recipient}} \
+        {{if treasury != ""}}--treasury {{treasury}}{{end}} \
+        {{if slippage != ""}}--slippage-bps {{slippage}}{{end}}
+
+# Send tokens with swap on local network
+send-local keypair input_token output_token amount recipient treasury="" slippage="":
+    cargo run --release -- --rpc-url http://localhost:8899 send \
+        --keypair {{keypair}} \
+        --input-token {{input_token}} \
+        --output-token {{output_token}} \
+        --amount {{amount}} \
+        --recipient {{recipient}} \
+        {{if treasury != ""}}--treasury {{treasury}}{{end}} \
+        {{if slippage != ""}}--slippage-bps {{slippage}}{{end}}
+
+# Send tokens with swap on devnet
+send-devnet keypair input_token output_token amount recipient treasury="" slippage="":
+    cargo run --release -- --rpc-url https://api.devnet.solana.com send \
+        --keypair {{keypair}} \
+        --input-token {{input_token}} \
+        --output-token {{output_token}} \
+        --amount {{amount}} \
+        --recipient {{recipient}} \
+        {{if treasury != ""}}--treasury {{treasury}}{{end}} \
+        {{if slippage != ""}}--slippage-bps {{slippage}}{{end}}
