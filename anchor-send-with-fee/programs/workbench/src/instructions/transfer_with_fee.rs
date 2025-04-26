@@ -4,14 +4,22 @@ use crate::{Settings, SETTINGS};
 
 #[derive(Accounts)]
 pub struct TransferWithFee<'info> {
+    /// CHECK: This is the authority account that is used to transfer the fee
+    #[account(mut)]
+    pub authority: AccountInfo<'info>,
+
     #[account(mut)]
     pub from: Signer<'info>,
+
+    /// CHECK: This is the recipient account that is used to transfer the main amount
     #[account(mut)]
-    pub to: SystemAccount<'info>,
+    pub to: AccountInfo<'info>,
 
     #[account(
-      seeds = [SETTINGS.as_ref(), from.key().as_ref()],
+      mut,
+      seeds = [SETTINGS.as_ref(), authority.key().as_ref()],
       bump = settings.bump,
+      has_one = authority,
     )]
     pub settings: Account<'info, Settings>,
     pub system_program: Program<'info, System>,
@@ -40,7 +48,7 @@ pub fn processor(ctx: Context<TransferWithFee>, args: TransferWithFeeArgs) -> Re
         CpiContext::new(
             ctx.accounts.system_program.to_account_info(),
             anchor_lang::system_program::Transfer {
-                from: ctx.accounts.from.to_account_info(),
+                from: ctx.accounts.authority.to_account_info(),
                 to: ctx.accounts.settings.to_account_info(),
             },
         ),
